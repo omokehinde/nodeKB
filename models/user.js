@@ -9,11 +9,13 @@ const UserSchema = mongoose.Schema({
   },
   email:{
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   username:{
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   password:{
     type: String,
@@ -22,3 +24,13 @@ const UserSchema = mongoose.Schema({
 });
 
 const User = module.exports = mongoose.model('User', UserSchema);
+
+module.exports.getUserByUsername = function(username) {
+  let query = {'_id':{username:'username'}};
+  User.findOne(query);
+}
+
+module.exports.getUserByEmail = function(email) {
+  let query = {'_id':{email:'email'}};
+  User.findOne(query);
+}
