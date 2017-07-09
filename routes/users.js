@@ -41,9 +41,10 @@ router.post('/register', checkIfEmailExist, checkIfUsernameExist, function(req, 
   //let parseBodyUsername = JSON.parse(req.body.username);
 
   // to check if email\ exist
-  //let emailTaken = getUserByEmail(email);
+  //let emailTaken = getUserByEmail(req.body.email);
   // to check if username exist
-  //let usernameTaken = getUserByUsername(username);
+  //let usernameTaken = getUserByUsername(req.body.username);
+
 
   if (errors) {
     res.render('register', {
@@ -69,7 +70,7 @@ router.post('/register', checkIfEmailExist, checkIfUsernameExist, function(req, 
             return;
           } else {
             req.flash('success', 'You are now registered and can log in');
-            res.redirect('/users/login');
+            res.redirect('/users/login')
           }
         });
       });
@@ -84,7 +85,7 @@ router.get('/login', function(req, res) {
 
 // Logn process
 router.post('/login', function(req, res, next) {
-  passport.authenticate('local', {
+  passport.authenticate('local-login', {
      successRedirect: '/',
      failureRedirect: '/users/login',
      failureFlash: true
@@ -99,7 +100,7 @@ router.get('/logout', function(req, res) {
 });
 
 function checkIfEmailExist(req, res, next) {
-  User.findOne({email:req.body.email}, function (err, user) {
+  User.findOne({'email':req.body.email}, function (err, user) {
     if (err) {
       console.log(err);
     }
@@ -107,13 +108,13 @@ function checkIfEmailExist(req, res, next) {
       req.flash('danger', 'Email in use');
       res.render('register');
     } else {
-      return next();
+      next();
     }
   });
 }
 
 function checkIfUsernameExist(req, res, next) {
-  User.findOne({email:req.body.username}, function (err, user) {
+  User.findOne({'username':req.body.username}, function (err, user) {
     if (err) {
       console.log(err);
     }
@@ -121,7 +122,7 @@ function checkIfUsernameExist(req, res, next) {
       req.flash('danger', 'Username in use');
       res.render('register');
     } else {
-      return next();
+      next();
     }
   });
 }
