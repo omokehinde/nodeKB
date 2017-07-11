@@ -37,8 +37,6 @@ router.post('/register', function(req, res, next) {
     if (user) {
       req.flash('danger', 'Username in use');
       res.render('register');
-    } else {
-      next();
     }
   });
   next();
