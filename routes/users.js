@@ -18,7 +18,31 @@ router.get('/register', function(req, res) {
 });
 
 // Register User
-router.post('/register', checkIfEmailExist, checkIfUsernameExist, function(req, res) {
+router.post('/register', function(req, res, next) {
+  User.findOne({'email':req.body.email}, function (err, user) {
+    if (err) {
+      console.log(err);
+    }
+    if (user) {
+      req.flash('danger', 'Email in use');
+      res.render('register');
+    }
+  });
+  next();
+}, function(req, res, next) {
+  User.findOne({'username':req.body.username}, function (err, user) {
+    if (err) {
+      console.log(err);
+    }
+    if (user) {
+      req.flash('danger', 'Username in use');
+      res.render('register');
+    } else {
+      next();
+    }
+  });
+  next();
+}, function(req, res) {
   const name = req.body.name;
   const username = req.body.username;
   const email = req.body.email;
@@ -34,16 +58,6 @@ router.post('/register', checkIfEmailExist, checkIfUsernameExist, function(req, 
 
   let errors = req.validationErrors();
 
-  require('../models/user')(email);
-  require('../models/user')(username);
-
-  //let parseBodyEmail = JSON.parse(req.body.email);
-  //let parseBodyUsername = JSON.parse(req.body.username);
-
-  // to check if email\ exist
-  //let emailTaken = getUserByEmail(req.body.email);
-  // to check if username exist
-  //let usernameTaken = getUserByUsername(req.body.username);
 
 
   if (errors) {
@@ -70,7 +84,7 @@ router.post('/register', checkIfEmailExist, checkIfUsernameExist, function(req, 
             return;
           } else {
             req.flash('success', 'You are now registered and can log in');
-            res.redirect('/users/login')
+            res.redirect('/users/login');
           }
         });
       });
@@ -99,32 +113,6 @@ router.get('/logout', function(req, res) {
   res.redirect('/users/login');
 });
 
-function checkIfEmailExist(req, res, next) {
-  User.findOne({'email':req.body.email}, function (err, user) {
-    if (err) {
-      console.log(err);
-    }
-    if (user) {
-      req.flash('danger', 'Email in use');
-      res.render('register');
-    } else {
-      next();
-    }
-  });
-}
 
-function checkIfUsernameExist(req, res, next) {
-  User.findOne({'username':req.body.username}, function (err, user) {
-    if (err) {
-      console.log(err);
-    }
-    if (user) {
-      req.flash('danger', 'Username in use');
-      res.render('register');
-    } else {
-      next();
-    }
-  });
-}
 
 module.exports = router;

@@ -24,13 +24,3 @@ const UserSchema = mongoose.Schema({
 });
 
 const User = module.exports = mongoose.model('User', UserSchema);
-
-module.exports.getUserByUsername = function(username) {
-  let query = {'username':username};
-  User.findOne(query);
-}
-
-module.exports.getUserByEmail = function(email) {
-  let query = {'email':email};
-  User.findOne(query);
-}
