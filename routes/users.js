@@ -18,29 +18,7 @@ router.get('/register', function(req, res) {
 });
 
 // Register User
-router.post('/register', function(req, res, next) {
-  User.findOne({'email':req.body.email}, function (err, user) {
-    if (err) {
-      console.log(err);
-    }
-    if (user) {
-      req.flash('danger', 'Email in use');
-      res.render('register');
-    }
-  });
-  next();
-}, function(req, res, next) {
-  User.findOne({'username':req.body.username}, function (err, user) {
-    if (err) {
-      console.log(err);
-    }
-    if (user) {
-      req.flash('danger', 'Username in use');
-      res.render('register');
-    }
-  });
-  next();
-}, function(req, res) {
+router.post('/register',checkIfEmailExist ,checkIfUsernameExist , function(req, res) {
   const name = req.body.name;
   const username = req.body.username;
   const email = req.body.email;
@@ -111,6 +89,30 @@ router.get('/logout', function(req, res) {
   res.redirect('/users/login');
 });
 
+function checkIfEmailExist(req, res, next) {
+  User.findOne({'email':req.body.email}, function (err, user) {
+    if (err) {
+      console.log(err);
+    }
+    if (user) {
+      req.flash('danger', 'Email in use');
+      res.render('register');
+    }
+  });
+  next();
+}
 
+function checkIfUsernameExist(req, res, next) {
+  User.findOne({'username':req.body.username}, function (err, user) {
+    if (err) {
+      console.log(err);
+    }
+    if (user) {
+      req.flash('danger', 'Username in use');
+      res.render('register');
+    }
+  });
+  next();
+}
 
 module.exports = router;
